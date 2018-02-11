@@ -11089,8 +11089,6 @@ __webpack_require__(209);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -11116,17 +11114,6 @@ var App = function (_React$Component) {
                 'div',
                 null,
                 _react2.default.createElement(Header, { user: this.state.user }),
-                _react2.default.createElement(
-                    'p',
-                    { className: 'App-intro' },
-                    'To get started, edit ',
-                    _react2.default.createElement(
-                        'code',
-                        null,
-                        'src/App.js'
-                    ),
-                    ' and save to reload.'
-                ),
                 _react2.default.createElement(Content, { user: this.state.user })
             );
         }
@@ -11135,352 +11122,30 @@ var App = function (_React$Component) {
     return App;
 }(_react2.default.Component);
 
-var StudentTable = function (_React$Component2) {
-    _inherits(StudentTable, _React$Component2);
-
-    function StudentTable(props) {
-        _classCallCheck(this, StudentTable);
-
-        return _possibleConstructorReturn(this, (StudentTable.__proto__ || Object.getPrototypeOf(StudentTable)).call(this, props));
-    }
-
-    _createClass(StudentTable, [{
-        key: 'render',
-        value: function render() {
-            var _this3 = this;
-
-            var students = this.props.students.map(function (student) {
-                return _react2.default.createElement(Student, { key: student._links.self.href, student: student, updateStudent: _this3.props.updateStudent, deleteStudent: _this3.props.deleteStudent });
-            });
-
-            return _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                    'table',
-                    { className: 'table table-striped' },
-                    _react2.default.createElement(
-                        'thead',
-                        null,
-                        _react2.default.createElement(
-                            'tr',
-                            null,
-                            _react2.default.createElement(
-                                'th',
-                                null,
-                                'Firstname'
-                            ),
-                            _react2.default.createElement(
-                                'th',
-                                null,
-                                'Lastname'
-                            ),
-                            _react2.default.createElement(
-                                'th',
-                                null,
-                                'Email'
-                            ),
-                            _react2.default.createElement(
-                                'th',
-                                null,
-                                ' '
-                            )
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'tbody',
-                        null,
-                        students
-                    )
-                )
-            );
-        }
-    }]);
-
-    return StudentTable;
-}(_react2.default.Component);
-
-var Student = function (_React$Component3) {
-    _inherits(Student, _React$Component3);
-
-    function Student(props) {
-        _classCallCheck(this, Student);
-
-        var _this4 = _possibleConstructorReturn(this, (Student.__proto__ || Object.getPrototypeOf(Student)).call(this, props));
-
-        _this4.state = { editShow: false };
-        _this4.deleteStudent = _this4.deleteStudent.bind(_this4);
-        return _this4;
-    }
-
-    _createClass(Student, [{
-        key: 'deleteStudent',
-        value: function deleteStudent() {
-            this.props.deleteStudent(this.props.student);
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            return _react2.default.createElement(
-                'tr',
-                null,
-                _react2.default.createElement(
-                    'td',
-                    null,
-                    this.props.student.firstname
-                ),
-                _react2.default.createElement(
-                    'td',
-                    null,
-                    this.props.student.lastname
-                ),
-                _react2.default.createElement(
-                    'td',
-                    null,
-                    this.props.student.email
-                ),
-                _react2.default.createElement(
-                    'td',
-                    null,
-                    _react2.default.createElement(StudentUpdateForm, { updateStudent: this.props.updateStudent, student: this.props.student })
-                ),
-                _react2.default.createElement(
-                    'td',
-                    null,
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'btn btn-danger btn-xs', onClick: this.deleteStudent },
-                        'Delete'
-                    )
-                )
-            );
-        }
-    }]);
-
-    return Student;
-}(_react2.default.Component);
-
-var StudentForm = function (_React$Component4) {
-    _inherits(StudentForm, _React$Component4);
-
-    function StudentForm(props) {
-        _classCallCheck(this, StudentForm);
-
-        var _this5 = _possibleConstructorReturn(this, (StudentForm.__proto__ || Object.getPrototypeOf(StudentForm)).call(this, props));
-
-        _this5.state = { firstname: '', lastname: '', email: '' };
-        _this5.handleSubmit = _this5.handleSubmit.bind(_this5);
-        _this5.handleChange = _this5.handleChange.bind(_this5);
-        return _this5;
-    }
-
-    _createClass(StudentForm, [{
-        key: 'handleChange',
-        value: function handleChange(event) {
-            this.setState(_defineProperty({}, event.target.name, event.target.value));
-        }
-    }, {
-        key: 'handleSubmit',
-        value: function handleSubmit(event) {
-            event.preventDefault();
-            console.log("Firstname: " + this.state.firstname);
-            var newStudent = { firstname: this.state.firstname, lastname: this.state.lastname, email: this.state.email };
-            this.props.createStudent(newStudent);
-            this.refs.simpleDialog.hide();
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this6 = this;
-
-            return _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                    _reactSkylight2.default,
-                    { hideOnOverlayClicked: true, ref: 'simpleDialog' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'panel panel-default' },
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'panel-heading' },
-                            'Create student'
-                        ),
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'panel-body' },
-                            _react2.default.createElement(
-                                'form',
-                                { className: 'form' },
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'col-md-4' },
-                                    _react2.default.createElement('input', { type: 'text', placeholder: 'Firstname', className: 'form-control', name: 'firstname', onChange: this.handleChange })
-                                ),
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'col-md-4' },
-                                    _react2.default.createElement('input', { type: 'text', placeholder: 'Lastname', className: 'form-control', name: 'lastname', onChange: this.handleChange })
-                                ),
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'col-md-4' },
-                                    _react2.default.createElement('input', { type: 'text', placeholder: 'Email', className: 'form-control', name: 'email', onChange: this.handleChange })
-                                ),
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'col-md-2' },
-                                    _react2.default.createElement(
-                                        'button',
-                                        { className: 'btn btn-primary', onClick: this.handleSubmit },
-                                        'Save'
-                                    )
-                                )
-                            )
-                        )
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'col-md-2' },
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'btn btn-primary', onClick: function onClick() {
-                                return _this6.refs.simpleDialog.show();
-                            } },
-                        'New student'
-                    )
-                )
-            );
-        }
-    }]);
-
-    return StudentForm;
-}(_react2.default.Component);
-
-var StudentUpdateForm = function (_React$Component5) {
-    _inherits(StudentUpdateForm, _React$Component5);
-
-    function StudentUpdateForm(props) {
-        _classCallCheck(this, StudentUpdateForm);
-
-        var _this7 = _possibleConstructorReturn(this, (StudentUpdateForm.__proto__ || Object.getPrototypeOf(StudentUpdateForm)).call(this, props));
-
-        _this7.state = { firstname: _this7.props.student.firstname, lastname: _this7.props.student.lastname, email: _this7.props.student.email };
-        _this7.handleSubmit = _this7.handleSubmit.bind(_this7);
-        _this7.handleChange = _this7.handleChange.bind(_this7);
-        return _this7;
-    }
-
-    _createClass(StudentUpdateForm, [{
-        key: 'handleChange',
-        value: function handleChange(event) {
-            this.setState(_defineProperty({}, event.target.name, event.target.value));
-        }
-    }, {
-        key: 'handleSubmit',
-        value: function handleSubmit(event) {
-            event.preventDefault();
-            var updStudent = { link: this.props.student._links.self.href, firstname: this.state.firstname, lastname: this.state.lastname, email: this.state.email };
-            this.props.updateStudent(updStudent);
-            this.refs.editDialog.hide();
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this8 = this;
-
-            return _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                    _reactSkylight2.default,
-                    { hideOnOverlayClicked: true, ref: 'editDialog' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'panel panel-default' },
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'panel-heading' },
-                            'Edit student'
-                        ),
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'panel-body' },
-                            _react2.default.createElement(
-                                'form',
-                                { className: 'form' },
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'col-md-4' },
-                                    _react2.default.createElement('input', { type: 'text', placeholder: 'Firstname', className: 'form-control', name: 'firstname', value: this.state.firstname, onChange: this.handleChange })
-                                ),
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'col-md-4' },
-                                    _react2.default.createElement('input', { type: 'text', placeholder: 'Lastname', className: 'form-control', name: 'lastname', value: this.state.lastname, onChange: this.handleChange })
-                                ),
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'col-md-4' },
-                                    _react2.default.createElement('input', { type: 'text', placeholder: 'Email', className: 'form-control', name: 'email', value: this.state.email, onChange: this.handleChange })
-                                ),
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'col-md-2' },
-                                    _react2.default.createElement(
-                                        'button',
-                                        { className: 'btn btn-primary', onClick: this.handleSubmit },
-                                        'Save'
-                                    )
-                                )
-                            )
-                        )
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'btn btn-primary btn-xs', onClick: function onClick() {
-                                return _this8.refs.editDialog.show();
-                            } },
-                        'Edit'
-                    )
-                )
-            );
-        }
-    }]);
-
-    return StudentUpdateForm;
-}(_react2.default.Component);
-
 var Content = function (_Component) {
     _inherits(Content, _Component);
 
     function Content(props) {
         _classCallCheck(this, Content);
 
-        var _this9 = _possibleConstructorReturn(this, (Content.__proto__ || Object.getPrototypeOf(Content)).call(this, props));
+        var _this2 = _possibleConstructorReturn(this, (Content.__proto__ || Object.getPrototypeOf(Content)).call(this, props));
 
-        _this9.state = { user: _this9.props.user };
-        _this9.loadCurrentUser();
-        return _this9;
+        _this2.state = { user: _this2.props.user };
+        _this2.loadCurrentUser();
+        return _this2;
     }
 
     _createClass(Content, [{
         key: 'loadCurrentUser',
         value: function loadCurrentUser() {
-            var _this10 = this;
+            var _this3 = this;
 
             fetch("http://localhost:8080/api/user", {
                 credentials: 'same-origin'
             }).then(function (response) {
                 return response.json();
             }).then(function (data) {
-                _this10.setState({
+                _this3.setState({
                     user: data
                 });
             });
@@ -11522,9 +11187,13 @@ var Header = function (_Component2) {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
-                'h1',
-                null,
-                'HEader'
+                'div',
+                { className: 'center' },
+                _react2.default.createElement(
+                    'h1',
+                    null,
+                    'HEader'
+                )
             );
         }
     }]);
@@ -11567,26 +11236,229 @@ var Projects = function (_Component4) {
     _createClass(Projects, [{
         key: 'render',
         value: function render() {
-            return _react2.default.createElement(
-                'h1',
-                null,
-                'Projects'
-            );
+            return _react2.default.createElement(ProjectList, null);
         }
     }]);
 
     return Projects;
 }(_react.Component);
 
-var Register = function (_Component5) {
-    _inherits(Register, _Component5);
+var ProjectList = function (_Component5) {
+    _inherits(ProjectList, _Component5);
+
+    function ProjectList(props) {
+        _classCallCheck(this, ProjectList);
+
+        var _this7 = _possibleConstructorReturn(this, (ProjectList.__proto__ || Object.getPrototypeOf(ProjectList)).call(this, props));
+
+        _this7.state = {
+            projects: []
+        };
+
+        _this7.loadProjects();
+        return _this7;
+    }
+
+    _createClass(ProjectList, [{
+        key: 'loadProjects',
+        value: function loadProjects() {
+            var _this8 = this;
+
+            fetch("http://localhost:8080/api/projects", {
+                credentials: "same-origin"
+            }).then(function (response) {
+                return response.json();
+            }).then(function (body) {
+                _this8.setState({
+                    projects: body
+                });
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var projList = this.state.projects.map(function (project) {
+                return _react2.default.createElement(ProjectItem, { key: project.id, project: project });
+            });
+
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    'ul',
+                    { id: 'slide-out', className: 'side-nav fixed' },
+                    _react2.default.createElement(
+                        'h2',
+                        null,
+                        'Project List'
+                    ),
+                    _react2.default.createElement(
+                        'li',
+                        null,
+                        _react2.default.createElement(CreateProject, { loadProjects: this.loadProjects() })
+                    ),
+                    projList
+                ),
+                _react2.default.createElement(
+                    'a',
+                    { href: '#', 'data-activates': 'slide-out', className: 'button-collapse' },
+                    _react2.default.createElement(
+                        'i',
+                        { className: 'material-icons' },
+                        'menu'
+                    )
+                ),
+                _react2.default.createElement(
+                    'script',
+                    null,
+                    '$(".button-collapse").sideNav();'
+                )
+            );
+        }
+    }]);
+
+    return ProjectList;
+}(_react.Component);
+
+var ProjectItem = function (_Component6) {
+    _inherits(ProjectItem, _Component6);
+
+    function ProjectItem(props) {
+        _classCallCheck(this, ProjectItem);
+
+        return _possibleConstructorReturn(this, (ProjectItem.__proto__ || Object.getPrototypeOf(ProjectItem)).call(this, props));
+    }
+
+    _createClass(ProjectItem, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'li',
+                null,
+                _react2.default.createElement(
+                    'a',
+                    { href: '#!' },
+                    this.props.project.name
+                )
+            );
+        }
+    }]);
+
+    return ProjectItem;
+}(_react.Component);
+
+var CreateProject = function (_Component7) {
+    _inherits(CreateProject, _Component7);
+
+    function CreateProject(props) {
+        _classCallCheck(this, CreateProject);
+
+        var _this10 = _possibleConstructorReturn(this, (CreateProject.__proto__ || Object.getPrototypeOf(CreateProject)).call(this, props));
+
+        _this10.state = { name: '' };
+        _this10.handleSubmit = _this10.handleSubmit.bind(_this10);
+        _this10.handleChange = _this10.handleChange.bind(_this10);
+
+        return _this10;
+    }
+
+    _createClass(CreateProject, [{
+        key: 'handleChange',
+        value: function handleChange(event) {
+            this.setState({ name: event.target.value });
+        }
+    }, {
+        key: 'handleSubmit',
+        value: function handleSubmit(event) {
+            var _this11 = this;
+
+            var newStudent = { firstname: this.state.firstname, lastname: this.state.lastname, email: this.state.email };
+            var newProject = {
+                id: null,
+                name: this.state.name,
+                manager: null
+            };
+            this.refs.simpleDialog.hide();
+
+            fetch("http://localhost:8080/api/projects/save", {
+                method: "post",
+                'credentials': 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newProject)
+            }).then(function (response) {
+                if (response.status == 200) {
+                    _this11.props.loadProjects();
+                }
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this12 = this;
+
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    'li',
+                    null,
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'btn waves-effect waves-light', onClick: function onClick() {
+                                return _this12.refs.simpleDialog.show();
+                            } },
+                        'New student'
+                    )
+                ),
+                _react2.default.createElement(
+                    _reactSkylight2.default,
+                    { hideOnOverlayClicked: true, ref: 'simpleDialog' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'panel panel-default' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'panel-heading' },
+                            'Create project'
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'panel-body' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'col m4' },
+                                _react2.default.createElement('input', { type: 'text', placeholder: 'Name', className: 'form-control', name: 'name', onChange: this.handleChange })
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'col m2' },
+                                _react2.default.createElement(
+                                    'button',
+                                    { type: 'button', className: 'btn waves-effect waves-light', onClick: this.handleSubmit },
+                                    'Save'
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return CreateProject;
+}(_react.Component);
+
+var Register = function (_Component8) {
+    _inherits(Register, _Component8);
 
     function Register(props) {
         _classCallCheck(this, Register);
 
-        var _this14 = _possibleConstructorReturn(this, (Register.__proto__ || Object.getPrototypeOf(Register)).call(this, props));
+        var _this13 = _possibleConstructorReturn(this, (Register.__proto__ || Object.getPrototypeOf(Register)).call(this, props));
 
-        _this14.state = {
+        _this13.state = {
             login: "",
             password: "",
             fn: "",
@@ -11596,13 +11468,13 @@ var Register = function (_Component5) {
             successfulRegistration: false
         };
 
-        _this14.handleLogin = _this14.handleLogin.bind(_this14);
-        _this14.handlePassword = _this14.handlePassword.bind(_this14);
-        _this14.handleFN = _this14.handleFN.bind(_this14);
-        _this14.handleLN = _this14.handleLN.bind(_this14);
-        _this14.register = _this14.register.bind(_this14);
-        _this14.handleRole = _this14.handleRole.bind(_this14);
-        return _this14;
+        _this13.handleLogin = _this13.handleLogin.bind(_this13);
+        _this13.handlePassword = _this13.handlePassword.bind(_this13);
+        _this13.handleFN = _this13.handleFN.bind(_this13);
+        _this13.handleLN = _this13.handleLN.bind(_this13);
+        _this13.register = _this13.register.bind(_this13);
+        _this13.handleRole = _this13.handleRole.bind(_this13);
+        return _this13;
     }
 
     _createClass(Register, [{
@@ -11634,7 +11506,7 @@ var Register = function (_Component5) {
     }, {
         key: 'register',
         value: function register() {
-            var _this15 = this;
+            var _this14 = this;
 
             var user = {
                 id: null,
@@ -11658,7 +11530,7 @@ var Register = function (_Component5) {
                 body: JSON.stringify(user)
             }).then(function (response) {
                 if (response.status != 200) {} else {
-                    _this15.setState({
+                    _this14.setState({
                         successfulRegistration: true
                     });
                 }

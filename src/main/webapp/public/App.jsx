@@ -18,170 +18,8 @@ class App extends React.Component {
         return (
             <div>
                 <Header user={this.state.user}/>
-                <p className="App-intro">
-                    To get started, edit <code>src/App.js</code> and save to reload.
-                </p>
                 <Content user={this.state.user}/>
             </div>
-        );
-    }
-}
-    	
-class StudentTable extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    
-    render() {
-    var students = this.props.students.map(student =>
-        <Student key={student._links.self.href} student={student} updateStudent={this.props.updateStudent} deleteStudent={this.props.deleteStudent}/>
-    );
-
-    return (
-      <div>
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>Firstname</th><th>Lastname</th><th>Email</th><th> </th>
-          </tr>
-        </thead>
-        <tbody>{students}</tbody>
-      </table>
-      </div>);
-    }
-}
-
-class Student extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {editShow: false};
-        this.deleteStudent = this.deleteStudent.bind(this);      
-    }
-
-    deleteStudent() {
-        this.props.deleteStudent(this.props.student);
-    } 
-
-    render() {
-        return (
-          <tr>
-            <td>{this.props.student.firstname}</td>
-            <td>{this.props.student.lastname}</td>
-            <td>{this.props.student.email}</td>
-            <td>               
-                <StudentUpdateForm updateStudent={this.props.updateStudent} student={this.props.student}/>          
-            </td>
-            <td>               
-                <button className="btn btn-danger btn-xs" onClick={this.deleteStudent}>Delete</button>
-            </td>
-          </tr>
-        );
-    } 
-}
-
-class StudentForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {firstname: '', lastname: '', email: ''};
-        this.handleSubmit = this.handleSubmit.bind(this);   
-        this.handleChange = this.handleChange.bind(this);     
-    }
-
-    handleChange(event) {
-        this.setState(
-            {[event.target.name]: event.target.value}
-        );
-    }    
-    
-    handleSubmit(event) {
-        event.preventDefault();
-        console.log("Firstname: " + this.state.firstname);
-        var newStudent = {firstname: this.state.firstname, lastname: this.state.lastname, email: this.state.email};
-        this.props.createStudent(newStudent);    
-        this.refs.simpleDialog.hide();    
-    }
-    
-    render() {
-        return (
-          <div>
-            <SkyLight hideOnOverlayClicked ref="simpleDialog">
-                <div className="panel panel-default">
-                <div className="panel-heading">Create student</div>
-                <div className="panel-body">
-                <form className="form">
-                    <div className="col-md-4">
-                        <input type="text" placeholder="Firstname" className="form-control"  name="firstname" onChange={this.handleChange}/>    
-                    </div>
-                    <div className="col-md-4">       
-                        <input type="text" placeholder="Lastname" className="form-control" name="lastname" onChange={this.handleChange}/>
-                    </div>
-                    <div className="col-md-4">
-                        <input type="text" placeholder="Email" className="form-control" name="email" onChange={this.handleChange}/>
-                    </div>
-                    <div className="col-md-2">
-                        <button className="btn btn-primary" onClick={this.handleSubmit}>Save</button>   
-                    </div>       
-                </form>
-                </div>      
-                </div>
-            </SkyLight>
-            <div className="col-md-2">
-                <button className="btn btn-primary" onClick={() => this.refs.simpleDialog.show()}>New student</button>
-            </div>
-          </div>   
-        );
-    }
-}
-
-class StudentUpdateForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {firstname: this.props.student.firstname, lastname: this.props.student.lastname, email: this.props.student.email};
-        this.handleSubmit = this.handleSubmit.bind(this);   
-        this.handleChange = this.handleChange.bind(this);     
-    }
-
-    handleChange(event) {
-        this.setState(
-            {[event.target.name]: event.target.value}
-        );
-    }    
-    
-    handleSubmit(event) {
-        event.preventDefault();
-        var updStudent = {link: this.props.student._links.self.href ,firstname: this.state.firstname, lastname: this.state.lastname, email: this.state.email};
-        this.props.updateStudent(updStudent);   
-        this.refs.editDialog.hide();         
-    }
-    
-    render() {
-        return (
-          <div>
-            <SkyLight hideOnOverlayClicked ref="editDialog">
-                <div className="panel panel-default">
-                <div className="panel-heading">Edit student</div>
-                <div className="panel-body">
-                <form className="form">
-                    <div className="col-md-4">
-                        <input type="text" placeholder="Firstname" className="form-control"  name="firstname" value={this.state.firstname} onChange={this.handleChange}/>    
-                    </div>
-                    <div className="col-md-4">       
-                        <input type="text" placeholder="Lastname" className="form-control" name="lastname" value={this.state.lastname} onChange={this.handleChange}/>
-                    </div>
-                    <div className="col-md-4">
-                        <input type="text" placeholder="Email" className="form-control" name="email" value={this.state.email} onChange={this.handleChange}/>
-                    </div>
-                    <div className="col-md-2">
-                        <button className="btn btn-primary" onClick={this.handleSubmit}>Save</button>   
-                    </div>       
-                </form>
-                </div>      
-                </div>
-            </SkyLight>
-            <div>
-                <button className="btn btn-primary btn-xs" onClick={() => this.refs.editDialog.show()}>Edit</button>
-            </div>
-          </div>   
         );
     }
 }
@@ -229,7 +67,7 @@ class Content extends Component {
 class Header extends Component {
     render() {
         return (
-            <h1>HEader</h1>
+            <div className="center"><h1>HEader</h1></div>
         )
     }
 
@@ -248,10 +86,128 @@ class Login extends Component {
 class Projects extends Component {
     render() {
         return (
-            <h1>Projects</h1>
+            <ProjectList/>
         )
     }
+}
 
+class ProjectList extends Component {
+
+    constructor(props){
+        super(props);
+        this.state = {
+            projects: []
+        };
+
+        this.loadProjects();
+    }
+
+    loadProjects(){
+        fetch("http://localhost:8080/api/projects",
+            {
+                credentials: "same-origin"
+            }).then(response => {
+            return response.json();
+        }).then(body => {
+            this.setState({
+                projects: body
+            });
+        })
+    }
+
+    render() {
+        var projList = this.state.projects.map(project => <ProjectItem key={project.id} project={project} />);
+
+        return (
+            <div>
+                <ul id="slide-out" className="side-nav fixed">
+                    <h2>Project List</h2>
+                    {projList}
+                </ul>
+                <CreateProject loadProjects={this.loadProjects()}/>
+                <a href="#" data-activates="slide-out" className="button-collapse">
+                    <i className="material-icons">menu</i>
+                </a>
+                <script>
+                    $(".button-collapse").sideNav();
+                </script>
+            </div>
+        )
+    }
+}
+
+class ProjectItem extends Component {
+
+    constructor(props) {
+        super(props);
+    }
+
+    render()
+    {
+        return (
+            <li><a href="#!">{this.props.project.name}</a></li>
+        )
+    }
+}
+
+class CreateProject extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {name: ''};
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+
+    }
+
+    handleChange(event) {
+        this.setState(
+            {name: event.target.value}
+        );
+    }
+
+    handleSubmit(event) {
+        var newStudent = {firstname: this.state.firstname, lastname: this.state.lastname, email: this.state.email};
+        var newProject = {
+            id: null,
+            name: this.state.name,
+            manager: null
+        }
+        this.refs.simpleDialog.hide();
+
+        fetch("http://localhost:8080/api/projects/save",{
+            method: "post",
+            'credentials': 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newProject)
+        }).then(response => {
+            if (response.status == 200){
+                this.props.loadProjects();
+            }
+        });
+    }
+
+    render() {
+        return (
+            <div>
+                <li><button className="btn waves-effect waves-light" onClick={() => this.refs.simpleDialog.show()}>New student</button></li>
+                <SkyLight hideOnOverlayClicked ref="simpleDialog">
+                    <div className="panel panel-default">
+                        <div className="panel-heading">Create project</div>
+                        <div className="panel-body">
+                                <div className="col m4">
+                                    <input type="text" placeholder="Name" className="form-control"  name="name" onChange={this.handleChange}/>
+                                </div>
+                                <div className="col m2">
+                                    <button type="button" className="btn waves-effect waves-light" onClick={this.handleSubmit}>Save</button>
+                                </div>
+                        </div>
+                    </div>
+                </SkyLight>
+            </div>
+        );
+    }
 }
 
 class Register extends Component {
@@ -362,5 +318,7 @@ class Register extends Component {
     }
 
 }
+
+
 
 ReactDOM.render(<App />, document.getElementById('root') );
