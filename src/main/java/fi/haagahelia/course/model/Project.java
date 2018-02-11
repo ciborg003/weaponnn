@@ -16,7 +16,7 @@ import java.util.Set;
 public class Project {
     @Id
     @GeneratedValue
-    @Column(name = "idProject")
+    @Column(name = "id_project")
     private Long id;
     @Column(name = "Name")
     private String name;
@@ -28,8 +28,8 @@ public class Project {
             CascadeType.MERGE
     }, fetch = FetchType.LAZY)
     @JoinTable(name = "project_has_user",
-            joinColumns = @JoinColumn(name = "Developer_id"),
-            inverseJoinColumns = @JoinColumn(name = "id_user")
+            joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id_project"),
+            inverseJoinColumns = @JoinColumn(name = "developer_id",referencedColumnName = "id_user")
     )
     private Set<User> developers = new HashSet<User>();
 }
