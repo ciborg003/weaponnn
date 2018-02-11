@@ -10,14 +10,14 @@
     "type": "git",
     "url": "https://github.com/juhahinkula/SpringBootReact.git"
   },
-  "author": "Juha Hinkula",
+  "author": "Alexey Pavlovsky",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/juhahinkula/SpringBootReact/issues"
   },
   "homepage": "https://github.com/juhahinkula/SpringBootReact",
   "devDependencies": {
-		"babel-core": "^6.18.2",
+    "babel-core": "^6.18.2",
     "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.16.0",

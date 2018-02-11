@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import SkyLight from 'react-skylight';
@@ -7,92 +7,24 @@ import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 
+
 class App extends React.Component {
-  constructor(props) {
-      super(props);
-      this.deleteStudent = this.deleteStudent.bind(this);
-      this.createStudent = this.createStudent.bind(this);
-      this.updateStudent = this.updateStudent.bind(this);
+    constructor(props){
+        super(props);
+        this.state = {user: null};
+    }
 
-      this.state = {
-          students: [],
-      };
-   }
- 
-  componentDidMount() {
-    this.loadStudentsFromServer();
-  }
-  
-  // Load students from database
-  loadStudentsFromServer() {
-      fetch('http://localhost:8080/api/students', 
-      {credentials: 'same-origin'}) 
-      .then((response) => response.json()) 
-      .then((responseData) => { 
-          this.setState({ 
-              students: responseData._embedded.students, 
-          }); 
-      });
-  } 
-
-  // Delete student
-  deleteStudent(student) {
-      fetch (student._links.self.href,
-      { method: 'DELETE', 
-        credentials: 'same-origin'})
-      .then( 
-          res => this.loadStudentsFromServer()
-      )
-      .then(() => { 
-          Alert.success('Student deleted', {
-            position: 'bottom-left',
-            effect: 'slide'
-          });
-      })
-      .catch( err => console.error(err))                
-  }  
-  
-  // Create new student
-  createStudent(student) {
-      fetch('http://localhost:8080/api/students', 
-      {   method: 'POST', 
-          credentials: 'same-origin',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(student)
-      })
-      .then( 
-          res => this.loadStudentsFromServer()
-      )
-      .catch( err => console.error(err))
-  }
-  
-  // Update student
-  updateStudent(student) {
-    fetch(student.link, 
-    {   method: 'PUT', 
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(student)
-    })
-    .then( 
-        res => this.loadStudentsFromServer()
-    )
-    .catch( err => console.error(err))
-  }
-
-  render() {
-    return (
-       <div>
-          <StudentTable deleteStudent={this.deleteStudent} updateStudent={this.updateStudent} students={this.state.students}/> 
-          <StudentForm createStudent={this.createStudent}/>
-          <Alert stack={true} timeout={2000} />
-       </div>
-    );
-  }
+    render() {
+        return (
+            <div>
+                <Header user={this.state.user}/>
+                <p className="App-intro">
+                    To get started, edit <code>src/App.js</code> and save to reload.
+                </p>
+                <Content user={this.state.user}/>
+            </div>
+        );
+    }
 }
     	
 class StudentTable extends React.Component {
@@ -254,5 +186,181 @@ class StudentUpdateForm extends React.Component {
     }
 }
 
+class Content extends Component {
+
+    constructor(props){
+        super(props);
+        this.state = {user: this.props.user};
+        this.loadCurrentUser();
+    }
+
+    loadCurrentUser() {
+        fetch("http://localhost:8080/api/user",{
+            credentials: 'same-origin'
+        }).then(response=>{
+            return response.json()
+        }).then(data => {
+            this.setState({
+                user: data
+            })
+        })
+    }
+
+    isLoggedIn(){
+        return this.state.user && this.state.user.id;
+    }
+
+    render() {
+        if (!this.isLoggedIn()){
+            return (
+                <div>
+                    <Login user={this.state.user}/>
+                    <Register/>
+                </div>
+            )
+        }
+
+        return (
+            <Projects/>
+        )
+    }
+
+}
+class Header extends Component {
+    render() {
+        return (
+            <h1>HEader</h1>
+        )
+    }
+
+}
+
+class Login extends Component {
+
+    render() {
+        return (
+            <a href="http://localhost:8080/login">Login</a>
+        )
+    }
+
+}
+
+class Projects extends Component {
+    render() {
+        return (
+            <h1>Projects</h1>
+        )
+    }
+
+}
+
+class Register extends Component {
+
+    constructor(props){
+        super(props)
+        this.state = {
+            login: "",
+            password: "",
+            fn: "",
+            ln: "",
+            role: "1",
+            error: false,
+            successfulRegistration: false
+        }
+
+        this.handleLogin = this.handleLogin.bind(this);
+        this.handlePassword = this.handlePassword.bind(this);
+        this.handleFN = this.handleFN.bind(this);
+        this.handleLN = this.handleLN.bind(this);
+        this.register = this.register.bind(this);
+        this.handleRole = this.handleRole.bind(this)
+    }
+
+    handleLogin(e){
+        this.setState({login: e.target.value});
+    }
+
+    handlePassword(e){
+        this.setState({password: e.target.value});
+    }
+
+    handleFN(e){
+        this.setState({fn: e.target.value});
+    }
+
+    handleLN(e){
+        this.setState({ln: e.target.value});
+    }
+
+    handleRole(e){
+        this.setState({role: e.target.value});
+        console.log(e.target.value);
+    }
+
+    register(){
+        var user = {
+            id: null,
+            firstName: this.state.fn,
+            lastName: this.state.fn,
+            email: this.state.login,
+            password: this.state.password,
+            role: {
+                id: +this.state.role,
+                role:""
+            }
+        }
+
+        console.log(JSON.stringify(user));
+
+        fetch("http://localhost:8080/api/user/register",{
+            method: "post",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        }).then(response => {
+            if (response.status != 200){
+
+            } else {
+                this.setState({
+                    successfulRegistration: true
+                })
+            }
+        }).catch(exc => {
+            console.log("Exception:\n"+exc);
+        })
+    }
+
+    render() {
+        var error, successfulRegistration;
+        if (this.state.error){
+            error = <div>Login already exists</div>;
+        }
+        if (this.state.successfulRegistration){
+            successfulRegistration = <h1>You've been registred successfully</h1>;
+        }
+        return (
+            <div>
+                {error}
+                <input value={this.state.login} onChange={this.handleLogin} name="username" type="text" placeholder="login"/>
+                <br/>
+                <input value={this.state.password} onChange={this.handlePassword} name="password" type="password" placeholder="password"/>
+                <br/>
+                <input value={this.state.fn} onChange={this.handleFN} name="FN" type="text" placeholder="First Name"/>
+                <br/>
+                <input value={this.state.ln} onChange={this.handleLN} name="LN" type="text" placeholder="Last Name"/>
+                <br/>
+                <select value={this.state.role} onChange={this.handleRole}>
+                    <option value="1">Manager</option>
+                    <option value="2">Developer</option>
+                </select>
+                <br/>
+                <button type="button" onClick={this.register}>Register</button>
+                {successfulRegistration}
+            </div>
+        )
+    }
+
+}
 
 ReactDOM.render(<App />, document.getElementById('root') );

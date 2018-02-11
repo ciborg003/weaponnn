@@ -1,6 +1,7 @@
 package fi.haagahelia.course;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,8 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 		http
 		.authorizeRequests()
-			.antMatchers("/public/**").permitAll()
-			.anyRequest().authenticated()
+			.antMatchers("/register","/public/**","/register","/api/user/register").permitAll()
 			.and()
 		.formLogin()
 			.defaultSuccessUrl("/", true)
@@ -41,5 +41,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
+
+    @Bean
+	public BCryptPasswordEncoder bCryptPasswordEncoder(){
+    	return new BCryptPasswordEncoder();
+	}
      
 }

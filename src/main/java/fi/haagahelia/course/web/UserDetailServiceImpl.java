@@ -1,5 +1,7 @@
 package fi.haagahelia.course.web;
 
+import fi.haagahelia.course.model.User;
+import fi.haagahelia.course.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,14 +9,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import fi.haagahelia.course.domain.User;
-import fi.haagahelia.course.domain.UserRepository;
-
 /**
  * This class is used by spring security to authenticate and authorize user
  **/
 @Service
 public class UserDetailServiceImpl implements UserDetailsService  {
+	@Autowired
 	private final UserRepository repository;
 
 	@Autowired
@@ -24,9 +24,9 @@ public class UserDetailServiceImpl implements UserDetailsService  {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {   
-    	User curruser = repository.findByUsername(username);
-        UserDetails user = new org.springframework.security.core.userdetails.User(username, curruser.getPasswordHash(), 
-        		AuthorityUtils.createAuthorityList(curruser.getRole()));
+        User curruser = repository.findByEmail(username);
+        UserDetails user = new org.springframework.security.core.userdetails.User(username, curruser.getPassword(),
+        		AuthorityUtils.createAuthorityList(curruser.getRole().getRole()));
         return user;
     }   
 } 
