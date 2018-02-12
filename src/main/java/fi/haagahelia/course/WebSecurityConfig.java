@@ -35,6 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.csrf().disable()
 		.logout()
 			.logoutSuccessUrl("/");
+
+		http.authorizeRequests().antMatchers("/projects","/projects/**").hasAnyRole("MANAGER","DEVELOPER");
     }
     	
     @Autowired

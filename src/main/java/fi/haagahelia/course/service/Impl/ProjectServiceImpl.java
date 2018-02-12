@@ -18,9 +18,6 @@ public class ProjectServiceImpl implements ProjectService{
     @Override
     public Project save(Project project) {
         project.setManager(userService.getCurrentUser());
-        System.out.println(userService.getCurrentUser());
-        System.out.println(project);
-        System.out.println(project.getManager());
         return projectRepository.save(project);
     }
 }

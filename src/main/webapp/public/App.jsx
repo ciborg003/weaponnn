@@ -6,6 +6,7 @@ import SkyLightStateless from 'react-skylight';
 import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
+import { Router, Route, Switch } from 'react-router';
 
 
 class App extends React.Component {
@@ -53,7 +54,6 @@ class Content extends Component {
             return (
                 <div>
                     <Login user={this.state.user}/>
-                    <Register/>
                 </div>
             )
         }
@@ -67,7 +67,7 @@ class Content extends Component {
 class Header extends Component {
     render() {
         return (
-            <div className="center"><h1>HEader</h1></div>
+            <header className="center"><h1>HEader</h1></header>
         )
     }
 
@@ -77,7 +77,10 @@ class Login extends Component {
 
     render() {
         return (
-            <a href="http://localhost:8080/login">Login</a>
+            <div>
+                <a href="http://localhost:8080/login">Login</a>
+                <Register/>
+            </div>
         )
     }
 
@@ -115,6 +118,10 @@ class ProjectList extends Component {
         })
     }
 
+    componentDidMount(){
+        $(".button-collapse").sideNav();
+    }
+
     render() {
         var projList = this.state.projects.map(project => <ProjectItem key={project.id} project={project} />);
 
@@ -122,15 +129,22 @@ class ProjectList extends Component {
             <div>
                 <ul id="slide-out" className="side-nav fixed">
                     <h2>Project List</h2>
+                    <li><div className="center">
+                        <button className="btn waves-effect waves-light" onClick={() => this.refs.simpleDialog.show()}>New project</button>
+                    </div></li>
                     {projList}
                 </ul>
-                <CreateProject loadProjects={this.loadProjects()}/>
                 <a href="#" data-activates="slide-out" className="button-collapse">
                     <i className="material-icons">menu</i>
                 </a>
-                <script>
-                    $(".button-collapse").sideNav();
-                </script>
+                <main style={{paddingLeft:300}}>
+                    <CreateProject loadProjects={this.loadProjects()}/>
+                </main>
+                {/*<Router>*/}
+                    {/*<Switch>*/}
+                        {/*<Route path="/:id" component={TaskList}/>*/}
+                    {/*</Switch>*/}
+                {/*</Router>*/}
             </div>
         )
     }
@@ -191,7 +205,6 @@ class CreateProject extends Component {
     render() {
         return (
             <div>
-                <li><button className="btn waves-effect waves-light" onClick={() => this.refs.simpleDialog.show()}>New student</button></li>
                 <SkyLight hideOnOverlayClicked ref="simpleDialog">
                     <div className="panel panel-default">
                         <div className="panel-heading">Create project</div>
@@ -319,6 +332,33 @@ class Register extends Component {
 
 }
 
+class TaskList extends Component {
 
+    constructor(props){
+        super(props);
+        this.state = {
+            tasks: []
+        }
+    }
+
+    loadTasks(){
+
+    }
+
+    render(){
+        <h2>TaskList</h2>
+    }
+}
+
+class TaskItem extends Component {
+
+    constructor(props){
+        super(props);
+    }
+
+    render(){
+        return (<h3>TaskItem</h3>);
+    }
+}
 
 ReactDOM.render(<App />, document.getElementById('root') );
