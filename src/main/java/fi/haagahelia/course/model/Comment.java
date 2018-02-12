@@ -1,6 +1,7 @@
 package fi.haagahelia.course.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"user", "task"})
 public class Comment {
     @Id
     @GeneratedValue

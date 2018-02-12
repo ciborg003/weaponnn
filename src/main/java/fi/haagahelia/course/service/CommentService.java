@@ -1,6 +1,10 @@
 package fi.haagahelia.course.service;
 
-import org.springframework.stereotype.Service;
+import fi.haagahelia.course.model.Comment;
 
 public interface CommentService {
+    Comment findById(Long id);
+    Comment save(Comment comment);
+    void updateComment(Comment comment);
+    void deleteComment(Long id);
 }

@@ -6,9 +6,7 @@ import fi.haagahelia.course.service.CommentService;
 import fi.haagahelia.course.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -18,9 +16,36 @@ public class CommentRestController {
     @Autowired
     private TaskService taskService;
 
-    /*@GetMapping(value = "/api/tasks/{id}")
+    @Autowired
+    private CommentService commentService;
+
+    @GetMapping(value = "/api/comments/{id}")
     public ResponseEntity<Set<Comment>> getComments(@PathVariable Long id) {
         Task task = taskService.findById(id);
         return ResponseEntity.ok(task.getComments());
-    }*/
+    }
+
+    @PostMapping(value = "/api/comment/{id}")
+    public ResponseEntity<Comment> getComment(@PathVariable Long id) {
+        Comment comment = commentService.findById(id);
+        return ResponseEntity.ok(comment);
+    }
+
+    @PostMapping(value = "/api/comment/save")
+    public ResponseEntity<?> saveComment(@RequestBody Comment comment){
+        commentService.save(comment);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping(value = "api/tcomment/status")
+    public ResponseEntity<?> updateComment(@RequestBody Comment comment){
+        commentService.updateComment(comment);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/api/comment/delete/{id}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long id) {
+        commentService.deleteComment(id);
+        return ResponseEntity.ok().build();
+    }
 }

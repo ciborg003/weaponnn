@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by brief on 09.02.2018.
@@ -33,4 +35,7 @@ public class Task {
     @JoinColumn(name = "user_id_user", nullable = false)
     @JsonIgnore
     private User user;
+    @OneToMany(mappedBy = "task")
+    @JsonIgnore
+    private Set<Comment> comments = new HashSet<>();
 }
