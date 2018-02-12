@@ -19,7 +19,7 @@ public class Task {
     @Column(name = "Name")
     private String name;
     @Column(name = "Description")
-    private String decription;
+    private String description;
     @Column(name = "Status")
     private String status;
     @ManyToOne(fetch = FetchType.LAZY)
