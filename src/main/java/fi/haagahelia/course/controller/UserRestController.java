@@ -38,4 +38,10 @@ public class UserRestController {
 
         return new ResponseEntity(HttpStatus.CONFLICT);
     }
+
+    @GetMapping("/api/user/search")
+    public ResponseEntity<User> findUser(@RequestParam("Firstname") String firstname, @RequestParam("Lastname") String lastname) {
+        User user = userService.findUser(firstname, lastname);
+        return ResponseEntity.ok(user);
+    }
 }

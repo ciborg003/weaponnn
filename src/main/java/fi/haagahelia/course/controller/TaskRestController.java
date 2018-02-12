@@ -7,10 +7,7 @@ import fi.haagahelia.course.service.TaskService;
 import fi.haagahelia.course.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -35,6 +32,18 @@ public class TaskRestController {
     @GetMapping(value = "/api/task/{id}")
     public ResponseEntity<Task> getTask(@PathVariable Long id) {
         Task task = taskService.findById(id);
+        return ResponseEntity.ok(task);
+    }
+
+    @PostMapping(value = "/api/task/save")
+    public ResponseEntity<?> saveTask(@RequestBody Task task){
+        taskService.save(task);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping(value = "api/task/status")
+    public ResponseEntity<Task> updateStatus(@RequestParam("id_task") Long id, @RequestParam("status") String status){
+        Task task = taskService.updateTaskStatus(id, status);
         return ResponseEntity.ok(task);
     }
 }

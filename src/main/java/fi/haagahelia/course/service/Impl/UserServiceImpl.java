@@ -31,4 +31,9 @@ public class UserServiceImpl implements UserService {
     public User getCurrentUser() {
         return userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
+
+    @Override
+    public User findUser(String firstname, String lastname) {
+        return userRepository.findByFirstNameAndLastName(firstname, lastname);
+    }
 }
