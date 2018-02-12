@@ -20,4 +20,9 @@ public class ProjectServiceImpl implements ProjectService{
         project.setManager(userService.getCurrentUser());
         return projectRepository.save(project);
     }
+
+    @Override
+    public Project findById(Long id) {
+        return projectRepository.findOne(id);
+    }
 }

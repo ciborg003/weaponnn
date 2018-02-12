@@ -5,4 +5,5 @@ import fi.haagahelia.course.model.Project;
 
 public interface ProjectService {
     Project save(Project project);
+    Project findById(Long id);
 }
