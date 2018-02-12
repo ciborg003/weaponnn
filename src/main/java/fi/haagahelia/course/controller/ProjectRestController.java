@@ -6,10 +6,7 @@ import fi.haagahelia.course.service.ProjectService;
 import fi.haagahelia.course.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -29,6 +26,11 @@ public class ProjectRestController {
         }
 
         return ResponseEntity.ok(user.getDevProjects());
+    }
+
+    @GetMapping(value = "/api/projects/{id}")
+    public ResponseEntity<Project> getProject(@PathVariable Long id){
+        return ResponseEntity.ok(projectService.findById(id));
     }
 
     @PostMapping(value = "/api/projects/save")

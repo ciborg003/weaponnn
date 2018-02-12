@@ -6,7 +6,7 @@ import SkyLightStateless from 'react-skylight';
 import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
-import { Router, Route, Switch } from 'react-router';
+import { Router, Route, Switch, BrowserRouter, Link} from 'react-router-dom';
 
 
 class App extends React.Component {
@@ -19,7 +19,7 @@ class App extends React.Component {
         return (
             <div>
                 <Header user={this.state.user}/>
-                <Content user={this.state.user}/>
+                <Content/>
             </div>
         );
     }
@@ -59,7 +59,7 @@ class Content extends Component {
         }
 
         return (
-            <Projects/>
+            <ProjectList/>
         )
     }
 
@@ -86,21 +86,16 @@ class Login extends Component {
 
 }
 
-class Projects extends Component {
-    render() {
-        return (
-            <ProjectList/>
-        )
-    }
-}
-
 class ProjectList extends Component {
 
     constructor(props){
         super(props);
         this.state = {
-            projects: []
+            projects: [],
+            selectedProject: null
         };
+
+        this.loadProjects = this.loadProjects.bind(this);
 
         this.loadProjects();
     }
@@ -118,33 +113,34 @@ class ProjectList extends Component {
         })
     }
 
+
     componentDidMount(){
         $(".button-collapse").sideNav();
     }
 
     render() {
         var projList = this.state.projects.map(project => <ProjectItem key={project.id} project={project} />);
-
+        var taskList;
+        if (this.state.selectedProject){
+            taskList = <TaskList project={this.state.selectedProject} />
+        }
         return (
             <div>
                 <ul id="slide-out" className="side-nav fixed">
                     <h2>Project List</h2>
-                    <li><div className="center">
-                        <button className="btn waves-effect waves-light" onClick={() => this.refs.simpleDialog.show()}>New project</button>
-                    </div></li>
                     {projList}
                 </ul>
                 <a href="#" data-activates="slide-out" className="button-collapse">
                     <i className="material-icons">menu</i>
                 </a>
-                <main style={{paddingLeft:300}}>
-                    <CreateProject loadProjects={this.loadProjects()}/>
+                <main style={{paddingLeft:350}}>
+                    {/*<CreateProject loadProjects={this.loadProjects()}/>*/}
+                    <Switch>
+                        <Route exact path="/" component={CreateProject} loadProjects={this.loadProjects}/>
+                        <Route path="/project/:id" component={TaskList}/>
+                        <Route path="/task/:id" component={Task}/>
+                    </Switch>
                 </main>
-                {/*<Router>*/}
-                    {/*<Switch>*/}
-                        {/*<Route path="/:id" component={TaskList}/>*/}
-                    {/*</Switch>*/}
-                {/*</Router>*/}
             </div>
         )
     }
@@ -159,7 +155,7 @@ class ProjectItem extends Component {
     render()
     {
         return (
-            <li><a href="#!">{this.props.project.name}</a></li>
+            <li><Link to={"/project/"+this.props.project.id}>{this.props.project.name}</Link></li>
         )
     }
 }
@@ -205,6 +201,7 @@ class CreateProject extends Component {
     render() {
         return (
             <div>
+                <button className="btn waves-effect waves-light" onClick={() => this.refs.simpleDialog.show()}>New project</button>
                 <SkyLight hideOnOverlayClicked ref="simpleDialog">
                     <div className="panel panel-default">
                         <div className="panel-heading">Create project</div>
@@ -263,7 +260,6 @@ class Register extends Component {
 
     handleRole(e){
         this.setState({role: e.target.value});
-        console.log(e.target.value);
     }
 
     register(){
@@ -300,6 +296,14 @@ class Register extends Component {
         })
     }
 
+    componentDidMount() {
+        var element = ReactDOM.findDOMNode(this.refs.dropdown)
+
+        $(element).ready(function() {
+            $('select').material_select();
+        });
+    }
+
     render() {
         var error, successfulRegistration;
         if (this.state.error){
@@ -319,10 +323,13 @@ class Register extends Component {
                 <br/>
                 <input value={this.state.ln} onChange={this.handleLN} name="LN" type="text" placeholder="Last Name"/>
                 <br/>
-                <select value={this.state.role} onChange={this.handleRole}>
-                    <option value="1">Manager</option>
-                    <option value="2">Developer</option>
-                </select>
+                <div className="input-field col s12">
+                    <select ref="dropdown" value={this.state.role} onChange={this.handleRole}>
+                        <option value="1">Manager</option>
+                        <option value="2">Developer</option>
+                    </select>
+                    <label>Choose Role</label>
+                </div>
                 <br/>
                 <button type="button" onClick={this.register}>Register</button>
                 {successfulRegistration}
@@ -339,14 +346,34 @@ class TaskList extends Component {
         this.state = {
             tasks: []
         }
+        this.loadTasks();
     }
 
     loadTasks(){
-
+        fetch("http://localhost:8080/api/tasks/"+this.props.match.params.id,{
+            method: "get",
+            credentials: "same-origin"
+        })
+            .then(response => {
+                if (response.status == 200){
+                    return response.json();
+                }
+            }).then(body => {
+                this.setState({
+                    tasks: body
+                })
+        })
     }
 
     render(){
-        <h2>TaskList</h2>
+        var taskItems = this.state.tasks.map(task => <TaskItem key={task.id} task={task}/>);
+
+        return(
+            <div>
+                <h2>{this.props.match.params.id} TaskList</h2>
+                {taskItems}
+            </div>
+        )
     }
 }
 
@@ -357,8 +384,85 @@ class TaskItem extends Component {
     }
 
     render(){
-        return (<h3>TaskItem</h3>);
+        return (<Link  to={"/task/"+this.props.task.id}>{this.props.task.name}</Link>);
     }
 }
 
-ReactDOM.render(<App />, document.getElementById('root') );
+class Task extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            task: {
+                name: "Title",
+                status: "W",
+                description: "Description"
+            }
+        }
+
+        this.changeStatus = this.changeStatus.bind(this);
+        this.loadTask();
+    }
+
+    changeStatus(e){
+        var form = new FormData();
+        form.append("id_task",this.state.task.id);
+        form.append("status",e.target.value)
+        console.log(form);
+
+        this.state.task.status = e.target.value;
+        fetch("http://localhost:8080/api/task/status",{
+            method: "put",
+            credentials: "same-origin",
+            body: form
+        }).then(response => {
+            if (response.status == 200){
+                console.log('successfully');
+            }
+        })
+    }
+
+    loadTask(){
+        fetch("http://localhost:8080/api/task/"+this.props.match.params.id,{
+            credentials: "same-origin"
+        })
+            .then(response => {
+                if (response.status == 200){
+                    return response.json();
+                }
+            }).then(body => {
+                this.setState({
+                    task: body
+                });
+        });
+    }
+
+    componentDidMount() {
+        var elementTaskStatus = ReactDOM.findDOMNode(this.refs.dropdownTask)
+
+        $(elementTaskStatus).ready(function() {
+            $('select').material_select();
+        });
+    }
+
+    render(){
+        if (this.state.task) {
+            return (<div>
+                <h2>{this.state.task.name}</h2>
+                Status:
+                <div className="input-field col s12">
+                    <select ref="dropdownTask" value={this.state.task.status} onChange={this.changeStatus}>
+                        <option value="W">Waiting</option>
+                        <option value="R">Realising</option>
+                        <option value="I">Implementing</option>
+                        <option value="V">Verifying</option>
+                    </select>
+                </div>
+                <p>{this.state.task.description}</p>
+            </div>)
+        }
+
+        return <h2>Unknown Task</h2>
+    }
+}
+
+ReactDOM.render(<BrowserRouter><App /></BrowserRouter>, document.getElementById('root') );
