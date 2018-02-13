@@ -1,6 +1,7 @@
 package fi.haagahelia.course.controller;
 
 import fi.haagahelia.course.model.Project;
+import fi.haagahelia.course.model.Task;
 import fi.haagahelia.course.model.User;
 import fi.haagahelia.course.service.ProjectService;
 import fi.haagahelia.course.service.UserService;
@@ -26,6 +27,12 @@ public class ProjectRestController {
         }
 
         return ResponseEntity.ok(user.getDevProjects());
+    }
+
+    @GetMapping(value = "/api/tasks")
+    public ResponseEntity<Set<Task>> getTasks(@PathVariable Long id) {
+        Project project = projectService.findById(id);
+        return ResponseEntity.ok(project.getTasks());
     }
 
     @GetMapping(value = "/api/projects/{id}")

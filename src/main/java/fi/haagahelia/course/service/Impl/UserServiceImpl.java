@@ -8,6 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -33,7 +35,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUser(String firstname, String lastname) {
-        return userRepository.findByFirstNameAndLastName(firstname, lastname);
+    public List<User> findUsers(String fullname) {
+        String[] names = fullname.split(" ", 2);
+        return userRepository.findAllByFirstNameIgnoreCaseContainingAndLastNameIgnoreCaseContainingAndRole_Role(names[0], names[1], "Developer");
     }
 }

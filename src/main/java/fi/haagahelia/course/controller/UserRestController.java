@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequestMapping(name = "/api/user")
@@ -40,8 +41,8 @@ public class UserRestController {
     }
 
     @GetMapping("/api/user/search")
-    public ResponseEntity<User> findUser(@RequestParam("Firstname") String firstname, @RequestParam("Lastname") String lastname) {
-        User user = userService.findUser(firstname, lastname);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<List<User>> findUsers(@RequestParam("Fullname") String fullname) {
+        List<User> users = userService.findUsers(fullname);
+        return ResponseEntity.ok(users);
     }
 }

@@ -15,19 +15,7 @@ import java.util.Set;
 public class TaskRestController {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ProjectService projectService;
-
-    @Autowired
     private TaskService taskService;
-
-    @GetMapping(value = "/api/tasks/{id}")
-    public ResponseEntity<Set<Task>> getTasks(@PathVariable Long id) {
-        Project project = projectService.findById(id);
-        return ResponseEntity.ok(project.getTasks());
-    }
 
     @GetMapping(value = "/api/task/{id}")
     public ResponseEntity<Task> getTask(@PathVariable Long id) {
