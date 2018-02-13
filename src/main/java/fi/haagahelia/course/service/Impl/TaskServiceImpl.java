@@ -4,6 +4,7 @@ import fi.haagahelia.course.model.Task;
 import fi.haagahelia.course.repository.ProjectRepository;
 import fi.haagahelia.course.repository.TaskRepository;
 import fi.haagahelia.course.service.TaskService;
+import fi.haagahelia.course.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,14 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
-
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private UserService userService;
 
     @Override
     public Task save(Task task) {
-        task.setProject(projectRepository.findOne(task.getProject().getId()));
+        task.setUser(userService.getCurrentUser());
         return taskRepository.save(task);
     }
 

@@ -2,6 +2,7 @@ package fi.haagahelia.course.controller;
 
 import fi.haagahelia.course.model.Project;
 import fi.haagahelia.course.model.Task;
+import fi.haagahelia.course.model.TaskProjIdDTO;
 import fi.haagahelia.course.service.ProjectService;
 import fi.haagahelia.course.service.TaskService;
 import fi.haagahelia.course.service.UserService;
@@ -16,6 +17,8 @@ public class TaskRestController {
 
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private ProjectService projectService;
 
     @GetMapping(value = "/api/task/{id}")
     public ResponseEntity<Task> getTask(@PathVariable Long id) {
@@ -24,8 +27,10 @@ public class TaskRestController {
     }
 
     @PostMapping(value = "/api/task/save")
-    public ResponseEntity<?> saveTask(@RequestBody Task task){
-        taskService.save(task);
+    public ResponseEntity<?> saveTask(@RequestBody TaskProjIdDTO task){
+        Task newTask = task.getTask();
+        newTask.setProject(projectService.findById(task.getProjId()));
+        taskService.save(newTask);
         return ResponseEntity.ok().build();
     }
 
