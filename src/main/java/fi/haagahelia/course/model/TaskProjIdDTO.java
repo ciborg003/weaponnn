@@ -6,4 +6,5 @@ import lombok.Data;
 public class TaskProjIdDTO {
     private Task task;
     private Long projId;
+    private Long userId;
 }

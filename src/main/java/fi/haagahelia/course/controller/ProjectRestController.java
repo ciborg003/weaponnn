@@ -29,7 +29,7 @@ public class ProjectRestController {
         return ResponseEntity.ok(user.getDevProjects());
     }
 
-    @GetMapping(value = "/api/tasks")
+    @GetMapping(value = "/api/tasks/{id}")
     public ResponseEntity<Set<Task>> getTasks(@PathVariable Long id) {
         Project project = projectService.findById(id);
         return ResponseEntity.ok(project.getTasks());

@@ -54,7 +54,7 @@ public class UserRestController {
     }
 
     @GetMapping("/api/developers/{id}")
-    public ResponseEntity<Set<User>> findDevelopersByProject(@RequestBody Long id) {
+    public ResponseEntity<Set<User>> findDevelopersByProject(@PathVariable Long id) {
         Set<User> users = userService.findDevsByProj(id);
         return ResponseEntity.ok(users);
     }

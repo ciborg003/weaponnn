@@ -12520,7 +12520,7 @@ var Header = function (_Component2) {
                 _react2.default.createElement(
                     'h1',
                     null,
-                    'HEader'
+                    'Task tracker'
                 )
             );
         }
@@ -12615,7 +12615,11 @@ var ProjectList = function (_Component4) {
                     _react2.default.createElement(
                         'h2',
                         null,
-                        'Project List'
+                        _react2.default.createElement(
+                            'a',
+                            { href: '/' },
+                            'Project List'
+                        )
                     ),
                     projList
                 ),
@@ -13012,9 +13016,19 @@ var TaskItem = function (_Component9) {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
-                _reactRouterDom.Link,
-                { to: "/task/" + this.props.task.id },
-                this.props.task.name
+                'div',
+                null,
+                _react2.default.createElement(
+                    'a',
+                    { href: "/task/" + this.props.task.id },
+                    this.props.task.name,
+                    ' ',
+                    _react2.default.createElement(
+                        'i',
+                        { className: 'material-icons' },
+                        'details'
+                    )
+                )
             );
         }
     }]);
@@ -13158,11 +13172,11 @@ var CreateTask = function (_Component11) {
 
         var _this19 = _possibleConstructorReturn(this, (CreateTask.__proto__ || Object.getPrototypeOf(CreateTask)).call(this, props));
 
-        _this19.state = { name: '', description: '' };
+        _this19.state = { name: '', description: '', data: {}, userId: null };
         _this19.handleSubmit = _this19.handleSubmit.bind(_this19);
         _this19.handleChangeName = _this19.handleChangeName.bind(_this19);
         _this19.handleChangeDescription = _this19.handleChangeDescription.bind(_this19);
-
+        _this19.getDevelopers = _this19.getDevelopers.bind(_this19);
         return _this19;
     }
 
@@ -13179,8 +13193,6 @@ var CreateTask = function (_Component11) {
     }, {
         key: 'handleSubmit',
         value: function handleSubmit(event) {
-            var _this20 = this;
-
             var newTask = {
                 id: null,
                 name: this.state.name,
@@ -13195,12 +13207,44 @@ var CreateTask = function (_Component11) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ task: newTask, projId: this.props.projId })
+                body: JSON.stringify({ task: newTask, projId: this.props.projId, userId: this.state.userId })
             }).then(function (response) {
-                if (response.status == 200) {
-                    _this20.props.loadTasks(_this20.props.projId);
-                }
+                if (response.status == 200) {}
             });
+        }
+    }, {
+        key: 'getDevelopers',
+        value: function getDevelopers() {
+            var _this20 = this;
+
+            fetch("http://localhost:8080/api/developers/" + this.props.projId).then(function (response) {
+                if (response.status == 200) {
+                    return response.json();
+                }
+            }).then(function (body) {
+                _this20.setState({
+                    data: body.reduce(function (map, obj) {
+                        map[obj.id + " " + obj.firstName + " " + obj.lastName] = null;
+                        return map;
+                    }, {})
+                });
+                $('input.autocomplete').autocomplete({
+                    data: _this20.state.data,
+                    limit: 20,
+                    onAutocomplete: function onAutocomplete(val) {
+                        var id = +val.split(" ")[0];
+                        this.setState({
+                            userId: id
+                        });
+                    },
+                    minLength: 1
+                });
+            });
+        }
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.getDevelopers();
         }
     }, {
         key: 'render',
@@ -13240,6 +13284,21 @@ var CreateTask = function (_Component11) {
                                 'div',
                                 { className: 'col m4' },
                                 _react2.default.createElement('input', { type: 'text', placeholder: 'Description', className: 'form-control', onChange: this.handleChangeDescription })
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'input-field col s12' },
+                                _react2.default.createElement(
+                                    'i',
+                                    { className: 'material-icons prefix' },
+                                    'textsms'
+                                ),
+                                _react2.default.createElement('input', { type: 'text', id: 'autocomplete-input', className: 'autocomplete', onChange: this.getDevelopers }),
+                                _react2.default.createElement(
+                                    'label',
+                                    { htmlFor: 'autocomplete-input' },
+                                    'Developer'
+                                )
                             ),
                             _react2.default.createElement(
                                 'div',

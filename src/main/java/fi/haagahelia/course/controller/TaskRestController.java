@@ -28,9 +28,7 @@ public class TaskRestController {
 
     @PostMapping(value = "/api/task/save")
     public ResponseEntity<?> saveTask(@RequestBody TaskProjIdDTO task){
-        Task newTask = task.getTask();
-        newTask.setProject(projectService.findById(task.getProjId()));
-        taskService.save(newTask);
+        taskService.save(task.getTask(), task.getProjId(), task.getUserId());
         return ResponseEntity.ok().build();
     }
 

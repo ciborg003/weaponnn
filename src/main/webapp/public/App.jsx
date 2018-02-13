@@ -67,7 +67,7 @@ class Content extends Component {
 class Header extends Component {
     render() {
         return (
-            <header className="center"><h1>HEader</h1></header>
+            <header className="center"><h1>Task tracker</h1></header>
         )
     }
 
@@ -127,7 +127,7 @@ class ProjectList extends Component {
         return (
             <div>
                 <ul id="slide-out" className="side-nav fixed">
-                    <h2>Project List</h2>
+                    <h2><a href="/">Project List</a></h2>
                     {projList}
                 </ul>
                 <a href="#" data-activates="slide-out" className="button-collapse">
@@ -346,7 +346,7 @@ class TaskList extends Component {
         this.state = {
             tasks: []
         }
-        this.loadTasks();
+        this.loadTasks(this.props.match.params.id);
     }
 
     loadTasks(id){
@@ -385,7 +385,11 @@ class TaskItem extends Component {
     }
 
     render(){
-        return (<Link  to={"/task/"+this.props.task.id}>{this.props.task.name}</Link>);
+        return (
+            <div>
+                <a href={"/task/"+this.props.task.id}>{this.props.task.name} <i className="material-icons">details</i></a>
+            </div>
+                );
     }
 }
 
@@ -472,11 +476,11 @@ class Task extends Component {
 class CreateTask extends Component {
     constructor(props) {
         super(props);
-        this.state = {name: '',description: ''};
+        this.state = {name: '',description: '', data:{},userId:null};
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChangeName = this.handleChangeName.bind(this);
         this.handleChangeDescription = this.handleChangeDescription.bind(this);
-
+        this.getDevelopers = this.getDevelopers.bind(this);
     }
 
     handleChangeName(event) {
@@ -506,12 +510,42 @@ class CreateTask extends Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({task:newTask,projId:this.props.projId})
+            body: JSON.stringify({task:newTask,projId:this.props.projId,userId:this.state.userId})
         }).then(response => {
             if (response.status == 200){
-                windows
             }
         });
+    }
+
+    getDevelopers(){
+        fetch("http://localhost:8080/api/developers/" + this.props.projId)
+            .then(response => {
+                if (response.status == 200){
+                    return response.json();
+                }
+            }).then(body => {
+                this.setState({
+                    data: body.reduce(function(map, obj) {
+                        map[obj.id + " " + obj.firstName + " " + obj.lastName] = null;
+                        return map;
+                    }, {})
+                });
+                $('input.autocomplete').autocomplete({
+                    data: this.state.data,
+                    limit: 20,
+                    onAutocomplete: function(val) {
+                        var id = +val.split(" ")[0]
+                        this.setState({
+                            userId:id
+                        })
+                    },
+                    minLength: 1,
+                });
+            });
+    }
+
+    componentDidMount(){
+        this.getDevelopers();
     }
 
     render() {
@@ -527,6 +561,11 @@ class CreateTask extends Component {
                             </div>
                             <div className="col m4">
                                 <input type="text" placeholder="Description" className="form-control" onChange={this.handleChangeDescription}/>
+                            </div>
+                            <div className="input-field col s12">
+                                <i className="material-icons prefix">textsms</i>
+                                <input type="text" id="autocomplete-input" className="autocomplete" onChange={this.getDevelopers}/>
+                                <label htmlFor="autocomplete-input">Developer</label>
                             </div>
                             <div className="col m2">
                                 <button type="button" className="btn waves-effect waves-light" onClick={this.handleSubmit}>Save</button>
