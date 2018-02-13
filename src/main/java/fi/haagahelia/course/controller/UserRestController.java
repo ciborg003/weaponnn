@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(name = "/api/user")
@@ -43,6 +44,18 @@ public class UserRestController {
     @GetMapping("/api/user/search")
     public ResponseEntity<List<User>> findUsers(@RequestParam("Fullname") String fullname) {
         List<User> users = userService.findUsers(fullname);
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/api/developers")
+    public ResponseEntity<List<User>> findDevelopers() {
+        List<User> users = userService.findDevs();
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/api/developers/{id}")
+    public ResponseEntity<Set<User>> findDevelopersByProject(@RequestBody Long id) {
+        Set<User> users = userService.findDevsByProj(id);
         return ResponseEntity.ok(users);
     }
 }

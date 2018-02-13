@@ -1,6 +1,8 @@
 package fi.haagahelia.course.service.Impl;
 
+import fi.haagahelia.course.model.Project;
 import fi.haagahelia.course.model.User;
+import fi.haagahelia.course.repository.ProjectRepository;
 import fi.haagahelia.course.repository.UserRepository;
 import fi.haagahelia.course.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,6 +21,8 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder encoder;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Override
     public boolean registerUser(User user) {
@@ -41,9 +46,21 @@ public class UserServiceImpl implements UserService {
         if (names[0] == null) {
             return new ArrayList<>();
         }
-        if(names[1] == null) {
-            return userRepository.findAllByFirstNameIgnoreCaseContainingOrLastNameIgnoreCaseContainingAndRole_Role(names[0], "ROLE_DEVELOPER");
+        if(names.length == 1) {
+            return userRepository.findAllByFirstNameIgnoreCaseContainingOrLastNameIgnoreCaseContainingAndRole_Role(names[0], names[0], "ROLE_DEVELOPER");
         }
         return userRepository.findAllByFirstNameIgnoreCaseContainingAndLastNameIgnoreCaseContainingAndRole_Role(names[0], names[1], "ROLE_DEVELOPER");
+    }
+
+    @Override
+    public List<User> findDevs() {
+        return userRepository.findAllByRole_Role("ROLE_DEVELOPER");
+    }
+
+    @Override
+    public Set<User> findDevsByProj(Long id) {
+        Project project = projectRepository.findOne(id);
+        Set<User> users = project.getDevelopers();
+        return users;
     }
 }
