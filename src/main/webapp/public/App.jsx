@@ -406,8 +406,7 @@ class Task extends Component {
     changeStatus(e){
         var form = new FormData();
         form.append("id_task",this.state.task.id);
-        form.append("status",e.target.value)
-        console.log(form);
+        form.append("status",e.target.value);
 
         this.state.task.status = e.target.value;
         fetch("http://localhost:8080/api/task/status",{
@@ -419,7 +418,6 @@ class Task extends Component {
             body: JSON.stringify(this.state.task)
         }).then(response => {
             if (response.status == 200){
-                console.log('successfully');
             }
         })
     }
