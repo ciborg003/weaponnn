@@ -13048,7 +13048,10 @@ var Task = function (_Component10) {
             fetch("http://localhost:8080/api/task/status", {
                 method: "put",
                 credentials: "same-origin",
-                body: form
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.state.task)
             }).then(function (response) {
                 if (response.status == 200) {
                     console.log('successfully');
@@ -13080,6 +13083,7 @@ var Task = function (_Component10) {
             $(elementTaskStatus).ready(function () {
                 $('select').material_select();
             });
+            $(elementTaskStatus).on('change', this.changeStatus);
         }
     }, {
         key: 'render',
@@ -13099,7 +13103,7 @@ var Task = function (_Component10) {
                         { className: 'input-field col s12' },
                         _react2.default.createElement(
                             'select',
-                            { ref: 'dropdownTask', value: this.state.task.status, onChange: this.changeStatus },
+                            { ref: 'dropdownTask', value: this.state.task.status },
                             _react2.default.createElement(
                                 'option',
                                 { value: 'W' },

@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
     @Modifying
-    @Query("UPDATE Task tsk set tsk.status = ?2 where tsk.id = ?1")
-    void updateTaskStatus(@Param("id") Long id, @Param("status") String status);
+    @Query("UPDATE Task t set t.status=?1 where t.id=?2")
+    void updateTaskStatus(@Param("status") String status, @Param("id") Long id);
 }

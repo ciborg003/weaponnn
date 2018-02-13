@@ -413,7 +413,10 @@ class Task extends Component {
         fetch("http://localhost:8080/api/task/status",{
             method: "put",
             credentials: "same-origin",
-            body: form
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.state.task)
         }).then(response => {
             if (response.status == 200){
                 console.log('successfully');
@@ -442,6 +445,7 @@ class Task extends Component {
         $(elementTaskStatus).ready(function() {
             $('select').material_select();
         });
+        $(elementTaskStatus).on('change',this.changeStatus);
     }
 
     render(){
@@ -450,7 +454,7 @@ class Task extends Component {
                 <h2>{this.state.task.name}</h2>
                 Status:
                 <div className="input-field col s12">
-                    <select ref="dropdownTask" value={this.state.task.status} onChange={this.changeStatus}>
+                    <select ref="dropdownTask" value={this.state.task.status}>
                         <option value="W">Waiting</option>
                         <option value="R">Realising</option>
                         <option value="I">Implementing</option>

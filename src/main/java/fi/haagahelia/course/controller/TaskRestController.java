@@ -42,8 +42,9 @@ public class TaskRestController {
     }
 
     @PutMapping(value = "api/task/status")
-    public ResponseEntity<Task> updateStatus(@RequestParam("id_task") Long id, @RequestParam("status") String status){
-        Task task = taskService.updateTaskStatus(id, status);
+//    public ResponseEntity<Task> updateStatus(@RequestParam("id_task") Long id, @RequestParam("status") String status){
+    public ResponseEntity<Task> updateStatus(@RequestBody Task newTask){
+        Task task = taskService.updateTaskStatus(newTask.getId(), newTask.getStatus());
         return ResponseEntity.ok(task);
     }
 }
