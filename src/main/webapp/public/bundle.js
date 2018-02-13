@@ -12946,16 +12946,16 @@ var TaskList = function (_Component8) {
         _this14.state = {
             tasks: []
         };
-        _this14.loadTasks();
+        _this14.loadTasks(_this14.props.match.params.id);
         return _this14;
     }
 
     _createClass(TaskList, [{
         key: 'loadTasks',
-        value: function loadTasks() {
+        value: function loadTasks(id) {
             var _this15 = this;
 
-            fetch("http://localhost:8080/api/tasks/" + this.props.match.params.id, {
+            fetch("http://localhost:8080/api/tasks/" + id, {
                 method: "get",
                 credentials: "same-origin"
             }).then(function (response) {
@@ -12972,7 +12972,13 @@ var TaskList = function (_Component8) {
         key: 'render',
         value: function render() {
             var taskItems = this.state.tasks.map(function (task) {
-                return _react2.default.createElement(TaskItem, { key: task.id, task: task });
+                return _react2.default.createElement(
+                    'div',
+                    null,
+                    ' ',
+                    _react2.default.createElement(TaskItem, { key: task.id, task: task }),
+                    _react2.default.createElement('br', null)
+                );
             });
 
             return _react2.default.createElement(
@@ -12984,6 +12990,7 @@ var TaskList = function (_Component8) {
                     this.props.match.params.id,
                     ' TaskList'
                 ),
+                _react2.default.createElement(CreateTask, { loadTasks: this.loadTasks, projId: this.props.match.params.id }),
                 taskItems
             );
         }
@@ -13032,19 +13039,18 @@ var Task = function (_Component10) {
         };
 
         _this17.changeStatus = _this17.changeStatus.bind(_this17);
-        _this17.loadTask();
+        _this17.loadTask(_this17.props.match.params.id);
         return _this17;
     }
 
     _createClass(Task, [{
         key: 'changeStatus',
         value: function changeStatus(e) {
-            var form = new FormData();
-            form.append("id_task", this.state.task.id);
-            form.append("status", e.target.value);
-            console.log(form);
-
-            this.state.task.status = e.target.value;
+            var task = this.state.task;
+            task.status = e.target.value;
+            this.setState({
+                task: task
+            });
             fetch("http://localhost:8080/api/task/status", {
                 method: "put",
                 credentials: "same-origin",
@@ -13053,17 +13059,15 @@ var Task = function (_Component10) {
                 },
                 body: JSON.stringify(this.state.task)
             }).then(function (response) {
-                if (response.status == 200) {
-                    console.log('successfully');
-                }
+                if (response.status == 200) {}
             });
         }
     }, {
         key: 'loadTask',
-        value: function loadTask() {
+        value: function loadTask(id) {
             var _this18 = this;
 
-            fetch("http://localhost:8080/api/task/" + this.props.match.params.id, {
+            fetch("http://localhost:8080/api/task/" + id, {
                 credentials: "same-origin"
             }).then(function (response) {
                 if (response.status == 200) {
@@ -13084,6 +13088,7 @@ var Task = function (_Component10) {
                 $('select').material_select();
             });
             $(elementTaskStatus).on('change', this.changeStatus);
+            $(elementTaskStatus).init({ default: this.state.task.status });
         }
     }, {
         key: 'render',
@@ -13103,7 +13108,7 @@ var Task = function (_Component10) {
                         { className: 'input-field col s12' },
                         _react2.default.createElement(
                             'select',
-                            { ref: 'dropdownTask', value: this.state.task.status },
+                            { ref: 'dropdownTask', value: this.state.task.status, onChange: this.componentDidMount() },
                             _react2.default.createElement(
                                 'option',
                                 { value: 'W' },
@@ -13143,6 +13148,116 @@ var Task = function (_Component10) {
     }]);
 
     return Task;
+}(_react.Component);
+
+var CreateTask = function (_Component11) {
+    _inherits(CreateTask, _Component11);
+
+    function CreateTask(props) {
+        _classCallCheck(this, CreateTask);
+
+        var _this19 = _possibleConstructorReturn(this, (CreateTask.__proto__ || Object.getPrototypeOf(CreateTask)).call(this, props));
+
+        _this19.state = { name: '', description: '' };
+        _this19.handleSubmit = _this19.handleSubmit.bind(_this19);
+        _this19.handleChangeName = _this19.handleChangeName.bind(_this19);
+        _this19.handleChangeDescription = _this19.handleChangeDescription.bind(_this19);
+
+        return _this19;
+    }
+
+    _createClass(CreateTask, [{
+        key: 'handleChangeName',
+        value: function handleChangeName(event) {
+            this.setState({ name: event.target.value });
+        }
+    }, {
+        key: 'handleChangeDescription',
+        value: function handleChangeDescription(event) {
+            this.setState({ description: event.target.value });
+        }
+    }, {
+        key: 'handleSubmit',
+        value: function handleSubmit(event) {
+            var _this20 = this;
+
+            var newTask = {
+                id: null,
+                name: this.state.name,
+                description: this.state.description,
+                status: "W"
+            };
+            this.refs.taskCreator.hide();
+
+            fetch("http://localhost:8080/api/task/save", {
+                method: "post",
+                'credentials': 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ task: newTask, projId: this.props.projId })
+            }).then(function (response) {
+                if (response.status == 200) {
+                    _this20.props.loadTasks(_this20.props.projId);
+                }
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this21 = this;
+
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    'button',
+                    { className: 'btn waves-effect waves-light', onClick: function onClick() {
+                            return _this21.refs.taskCreator.show();
+                        } },
+                    'New Task'
+                ),
+                _react2.default.createElement(
+                    _reactSkylight2.default,
+                    { hideOnOverlayClicked: true, ref: 'taskCreator' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'panel panel-default' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'panel-heading' },
+                            'Create Task'
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'panel-body' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'col m4' },
+                                _react2.default.createElement('input', { type: 'text', placeholder: 'Name', className: 'form-control', onChange: this.handleChangeName })
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'col m4' },
+                                _react2.default.createElement('input', { type: 'text', placeholder: 'Description', className: 'form-control', onChange: this.handleChangeDescription })
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'col m2' },
+                                _react2.default.createElement(
+                                    'button',
+                                    { type: 'button', className: 'btn waves-effect waves-light', onClick: this.handleSubmit },
+                                    'Save'
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return CreateTask;
 }(_react.Component);
 
 _reactDom2.default.render(_react2.default.createElement(

@@ -349,8 +349,8 @@ class TaskList extends Component {
         this.loadTasks();
     }
 
-    loadTasks(){
-        fetch("http://localhost:8080/api/tasks/"+this.props.match.params.id,{
+    loadTasks(id){
+        fetch("http://localhost:8080/api/tasks/"+id,{
             method: "get",
             credentials: "same-origin"
         })
@@ -366,11 +366,12 @@ class TaskList extends Component {
     }
 
     render(){
-        var taskItems = this.state.tasks.map(task => <TaskItem key={task.id} task={task}/>);
+        var taskItems = this.state.tasks.map(task =><div> <TaskItem key={task.id} task={task}/><br/></div>);
 
         return(
             <div>
                 <h2>{this.props.match.params.id} TaskList</h2>
+                <CreateTask loadTasks={this.loadTasks} projId={this.props.match.params.id}/>
                 {taskItems}
             </div>
         )
@@ -400,15 +401,15 @@ class Task extends Component {
         }
 
         this.changeStatus = this.changeStatus.bind(this);
-        this.loadTask();
+        this.loadTask(this.props.match.params.id);
     }
 
     changeStatus(e){
-        var form = new FormData();
-        form.append("id_task",this.state.task.id);
-        form.append("status",e.target.value);
-
-        this.state.task.status = e.target.value;
+        var task = this.state.task;
+        task.status = e.target.value;
+        this.setState({
+            task: task
+        });
         fetch("http://localhost:8080/api/task/status",{
             method: "put",
             credentials: "same-origin",
@@ -422,8 +423,8 @@ class Task extends Component {
         })
     }
 
-    loadTask(){
-        fetch("http://localhost:8080/api/task/"+this.props.match.params.id,{
+    loadTask(id){
+        fetch("http://localhost:8080/api/task/"+id,{
             credentials: "same-origin"
         })
             .then(response => {
@@ -444,6 +445,7 @@ class Task extends Component {
             $('select').material_select();
         });
         $(elementTaskStatus).on('change',this.changeStatus);
+        $(elementTaskStatus).init({default: this.state.task.status});
     }
 
     render(){
@@ -452,7 +454,7 @@ class Task extends Component {
                 <h2>{this.state.task.name}</h2>
                 Status:
                 <div className="input-field col s12">
-                    <select ref="dropdownTask" value={this.state.task.status}>
+                    <select ref="dropdownTask" value={this.state.task.status} onChange={this.componentDidMount()}>
                         <option value="W">Waiting</option>
                         <option value="R">Realising</option>
                         <option value="I">Implementing</option>
@@ -464,6 +466,76 @@ class Task extends Component {
         }
 
         return <h2>Unknown Task</h2>
+    }
+}
+
+class CreateTask extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {name: '',description: ''};
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChangeName = this.handleChangeName.bind(this);
+        this.handleChangeDescription = this.handleChangeDescription.bind(this);
+
+    }
+
+    handleChangeName(event) {
+        this.setState(
+            {name: event.target.value}
+        );
+    }
+
+    handleChangeDescription(event) {
+        this.setState(
+            {description: event.target.value}
+        );
+    }
+
+    handleSubmit(event) {
+        var newTask = {
+            id: null,
+            name: this.state.name,
+            description: this.state.description,
+            status: "W"
+        }
+        this.refs.taskCreator.hide();
+
+        fetch("http://localhost:8080/api/task/save",{
+            method: "post",
+            'credentials': 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({task:newTask,projId:this.props.projId})
+        }).then(response => {
+            if (response.status == 200){
+                windows
+            }
+        });
+    }
+
+    render() {
+        return (
+            <div>
+                <button className="btn waves-effect waves-light" onClick={() => this.refs.taskCreator.show()}>New Task</button>
+                <SkyLight hideOnOverlayClicked ref="taskCreator">
+                    <div className="panel panel-default">
+                        <div className="panel-heading">Create Task</div>
+                        <div className="panel-body">
+                            <div className="col m4">
+                                <input type="text" placeholder="Name" className="form-control" onChange={this.handleChangeName}/>
+                            </div>
+                            <div className="col m4">
+                                <input type="text" placeholder="Description" className="form-control" onChange={this.handleChangeDescription}/>
+                            </div>
+                            <div className="col m2">
+                                <button type="button" className="btn waves-effect waves-light" onClick={this.handleSubmit}>Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </SkyLight>
+            </div>
+        );
     }
 }
 
