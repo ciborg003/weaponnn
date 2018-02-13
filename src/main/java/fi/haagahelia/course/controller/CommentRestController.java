@@ -37,7 +37,7 @@ public class CommentRestController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping(value = "api/tcomment/status")
+    @PutMapping(value = "api/comment/update")
     public ResponseEntity<?> updateComment(@RequestBody Comment comment){
         commentService.updateComment(comment);
         return ResponseEntity.ok().build();

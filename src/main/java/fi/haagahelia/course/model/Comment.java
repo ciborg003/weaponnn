@@ -16,14 +16,14 @@ import javax.persistence.*;
 public class Comment {
     @Id
     @GeneratedValue
-    @Column(name = "idComment")
+    @Column(name = "id_comment")
     private Long id;
     @Column(name = "Text")
     private String text;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "User_idUser", nullable = false)
+    @JoinColumn(name = "user_id_user", nullable = false)
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Task_idTask", nullable = false)
+    @JoinColumn(name = "task_id_task", nullable = false)
     private Task task;
 }
